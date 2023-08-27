@@ -14,4 +14,8 @@ class TopicsController < ApplicationController
   def update
     redirect_to ' topics/edits '
   end
+  
+  def create
+    redirect_to edit_topic_path # redirects to GET "/topics/edit"
+  end
 end
