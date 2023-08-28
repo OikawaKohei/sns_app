@@ -1,5 +1,10 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!
+  def destroy
+    @post = Post.find(params[:id])
+    @post.destroy
+    redirect_to index_post_path, notice: '削除しました'
+  end
   
   def index
     @title = params[:title]
@@ -18,18 +23,35 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
-    
+
     if params[:post][:image]
       @post.image.attach(params[:post][:image])
     end
-    
+
     if @post.save
-      redirect_to index_post_path, notice: '登録しました'
+      redirect_to index_post_path, notice: '投稿しました'
     else
-      reder :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_entity
     end
   end
-  
+
+  def edit
+    @post = Post.find(params[:id])
+    render :edit
+  end
+
+  def update
+    @post = Post.find(params[:id])
+    if params[:post][:image]
+      @post.image.attach(params[:post][:image])
+    end
+    if @post.update(post_params)
+      redirect_to index_post_path, notice: '更新しました'
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
   def post_params
     params.require(:post).permit(:title, :body, :image)
